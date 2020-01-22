@@ -4,7 +4,7 @@
       <el-aside width="220px" style="background-color: rgb(238, 241, 246)" >
         <el-menu
           :default-active="this.$route.path"
-          router="true">
+          router>
           <el-submenu index="1">
             <template slot="title"><i class="el-icon-reading"></i>书籍管理</template>
             <el-menu-item index="/book/list">查看所有书籍</el-menu-item>

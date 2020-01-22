@@ -3,44 +3,47 @@
     <el-main>
       <!--  根据名字查找  -->
       <el-table
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+        :data="books"
         style="width: 100%">
         <el-table-column
           label="序号"
-          prop="date">
+          prop="id">
         </el-table-column>
         <el-table-column
           label="封面"
-          prop="name">
+          prop="path" >
+          <template slot-scope="scope">
+           <img :src="scope.row.path">
+          </template>
         </el-table-column>
         <el-table-column
           label="书名"
-          prop="address">
+          prop="bookname">
         </el-table-column>
         <el-table-column
           label="作者"
-          prop="">
+          prop="author">
         </el-table-column>
         <el-table-column
           label="价格"
-          prop="">
+          prop="price">
         </el-table-column>
         <el-table-column
           label="分类"
-          prop="">
+          prop="bookClass.name">
         </el-table-column>
         <el-table-column
           label="说明"
-          prop="">
+          prop="descr">
         </el-table-column>
         <el-table-column
           align="right">
-          <template slot="header" slot-scope="scope">
-            <el-input
-              v-model="search"
-              size="mini"
-              placeholder="输入关键字搜索"/>
-          </template>
+          <!--          <template slot="header" slot-scope="scope">-->
+          <!--            <el-input-->
+          <!--              v-model="search"-->
+          <!--              size="mini"-->
+          <!--              placeholder="输入关键字搜索"/>-->
+          <!--          </template>-->
           <template slot-scope="scope">
             <el-button
               size="mini"
@@ -72,34 +75,16 @@
     export default {
         data() {
             return {
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '张晓明',
-                    address: '普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '徐晓燕',
-                    address: '普陀区金沙江路 1516 弄'
-                }],
-                search: ''
+                books:[],
             }
         },
-        methods: {
-            handleEdit(index, row) {
-                console.log(index, row);
-            },
-            handleDelete(index, row) {
-                console.log(index, row);
-            }
-        },
+        mounted(){
+            this.axios.get('/book/queryAll')
+                .then(resp => {
+                    this.books = resp.data;
+                })
+        }
+
     }
 </script>
 

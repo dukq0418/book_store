@@ -25,7 +25,7 @@ export default new VueRouter({
         {path:'/order/order',component: Order},
       ]
     },{
-      path: '/user/login',
+      path: '/',
       component: Login
     }
   ]
