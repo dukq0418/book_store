@@ -1,28 +1,28 @@
 <template>
   <el-form ref="form" :model="form" label-width="80px">
     <el-form-item label="书名">
-      <el-input v-model="form.name"></el-input>
+      <el-input v-model="form.bookname"></el-input>
     </el-form-item>
     <el-form-item label="作者">
-      <el-input v-model="form.name"></el-input>
+      <el-input v-model="form.author"></el-input>
     </el-form-item>
     <el-form-item label="价格">
-      <el-input v-model="form.name"></el-input>
+      <el-input v-model="form.price"></el-input>
     </el-form-item>
     <el-form-item label="描述">
-      <el-input type="textarea" v-model="form.desc"></el-input>
+      <el-input type="textarea" v-model="form.descr"></el-input>
     </el-form-item>
-    <el-form-item style="margin-top: 15px;">
-      <el-input placeholder="请输入内容" v-model="input3" class="input-with-select">
-        <el-select v-model="select" slot="prepend" style="width: 125px" placeholder="请选择">
-          <el-option label="餐厅名" value="1"></el-option>
-          <el-option label="订单号" value="2"></el-option>
-          <el-option label="用户电话" value="3"></el-option>
-        </el-select>
-        <el-button slot="append" icon="el-icon-search"></el-button>
-      </el-input>
+    <el-form-item label="书籍分类">
+      <el-select v-model="form.class.name" @change="selectChange" clearable placeholder="请选择">
+        <el-option
+          v-for="item in selectList"
+          :key="item.id"
+          :label="item.id"
+          :value="item.name">
+        </el-option>
+      </el-select>
     </el-form-item>
-    <el-form-item align="left">
+    <el-form-item align="center">
       <el-upload
         class="upload-demo"
         action="https://jsonplaceholder.typicode.com/posts/"
@@ -53,6 +53,13 @@
     export default {
         data() {
             return {
+                form: {
+                    bookname: '',
+                    author: '',
+                    price: 0,
+                    classid: 0,
+                    descr: ''
+                },
                 fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
             };
         },
@@ -68,33 +75,35 @@
             },
             beforeRemove(file, fileList) {
                 return this.$confirm(`确定移除 ${ file.name }？`);
-            }
-        }
-    }
-</script>
-<script>
-    export default {
-        data() {
-            return {
-                form: {
-                    name: '',
-                    region: '',
-                    date1: '',
-                    date2: '',
-                    delivery: false,
-                    type: [],
-                    resource: '',
-                    desc: ''
-                }
+            },
+            selectChange(val){
+                var obj = {};
+                obj = this.selectList.find(function(item){
+                    return item.name === val;
+                })
+                this.editForm.id = obj.id;
+                this.edit.name = obj.name;
             }
         },
-        methods: {
-            onSubmit() {
-                console.log('submit!');
-            }
-        }
+        computed: {
+            selectList(){
+                let obj = [];
+                this.axios.get("/class/queryAll")
+                    .then(resp => {
+                        resp.data.forEach((item, index) => {
+                            obj.push({
+                                id: item.id,
+                                name: item.name
+                            });
+                        });
+                    });
+                return obj;
+            },
+        },
     }
+
 </script>
+
 
 
 <style scoped>
