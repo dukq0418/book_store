@@ -13,7 +13,7 @@
       <el-input type="textarea" v-model="form.descr"></el-input>
     </el-form-item>
     <el-form-item label="书籍分类">
-      <el-select v-model="form.bookClass" @change="selectChange" clearable placeholder="请选择">
+      <el-select v-model="form.classid" @change="selectChange" clearable placeholder="请选择">
         <el-option
           v-for="item in bookClassList"
           :key="item.id"
@@ -22,20 +22,20 @@
         </el-option>
       </el-select>
     </el-form-item>
-<!--    <el-form-item align="center">-->
-<!--      <el-upload-->
-<!--        class="upload-demo"-->
-<!--        action="https://jsonplaceholder.typicode.com/posts/"-->
-<!--        :on-preview="handlePreview"-->
-<!--        :on-remove="handleRemove"-->
-<!--        :before-remove="beforeRemove"-->
-<!--        multiple-->
-<!--        :limit="3"-->
-<!--        :on-exceed="handleExceed"-->
-<!--        :file-list="fileList">-->
-<!--        <el-button size="small" type="primary">点击上传</el-button>-->
-<!--      </el-upload>-->
-<!--    </el-form-item>-->
+    <el-form-item label="上传图片" align="center">
+
+      <el-upload
+        name="multipartFile"
+        action="http://localhost:8081/book/upload"
+        :on-preview="handlePreview"
+        :on-remove="handleRemove"
+        :on-success="handleSuccess"
+        v-model="form.path"
+        list-type="picture">
+        <el-button size="small" type="primary">点击上传</el-button>
+        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+      </el-upload>
+    </el-form-item>
     <el-form-item>
       <el-button type="primary" @click="onSubmit">立即创建</el-button>
       <el-button>取消</el-button>
@@ -56,15 +56,12 @@
                 bookClassList: [],
                 form: {
                     bookname: '',
-                    bookClass:{
-                      name: '', descr: ''
-                    },
                     author: '',
                     price: 0,
                     classid: 0,
-                    descr: ''
+                    descr: '',
+                    path: ''
                 },
-                // fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}, {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}]
             };
         },
         created(){
@@ -77,20 +74,34 @@
                 this.bookClassList = res;
              console.log(res)
             },
-            handleRemove(file, fileList) {
-                console.log(file, fileList);
+            //处理移除图片的操作
+            handleRemove(file) {
             },
+            //处理图片预览效果
             handlePreview(file) {
-                console.log(file);
             },
-            handleExceed(files, fileList) {
-                this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            handleSuccess(response){
+                this.form.path = response
+              console.log(this.form.path)
             },
-            beforeRemove(file, fileList) {
-                return this.$confirm('确定移除 ${ file.name }？');
-            },
-            onSubmit(){
-
+            // handleExceed(files, fileList) {
+            //     this.$message.warning(`当前限制选择 3 个文件，本次选择了 ${files.length} 个文件，共选择了 ${files.length + fileList.length} 个文件`);
+            // },
+            // beforeRemove(file, fileList) {
+            //     return this.$confirm('确定移除 ${ file.name }？');
+            // },
+            async onSubmit(){
+             const {data: res} = await this.$http.get('/book/add?bookname=' + this.form.bookname
+                 + '&author=' + this.form.author
+                 + '&price=' + this.form.price
+                 + '&classid=' + this.form.classid
+                 + '&descr=' + this.form.descr
+                 + '&path=' + this.form.path
+             )
+                if (res == 1){
+                    this.$message.success("添加成功！")
+                }
+                console.log(this.form)
             },
             selectChange(val){
                 // var obj = {};
@@ -102,19 +113,6 @@
             }
         },
         computed: {
-            selectList(){
-                // let obj = [];
-                // this.axios.get("/class/queryAll")
-                //     .then(resp => {
-                //         resp.data.forEach((item, index) => {
-                //             obj.push({
-                //                 id: item.id,
-                //                 name: item.name
-                //             });
-                //         });
-                //     });
-                // return obj;
-            },
         },
     }
 

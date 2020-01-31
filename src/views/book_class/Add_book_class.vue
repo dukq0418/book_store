@@ -3,8 +3,8 @@
     <el-form-item label="书名">
       <el-input v-model="form.name"></el-input>
     </el-form-item>
-    <el-form-item label="作者">
-      <el-input v-model="form.name"></el-input>
+    <el-form-item label="说明">
+      <el-input v-model="form.descr"></el-input>
     </el-form-item>
 
     <el-form-item>
@@ -25,20 +25,18 @@
         data() {
             return {
                 form: {
-                    name: '',
-                    region: '',
-                    date1: '',
-                    date2: '',
-                    delivery: false,
-                    type: [],
-                    resource: '',
-                    desc: ''
+                   id:'',
+                    name:'',
+                    descr:''
                 }
             }
         },
         methods: {
-            onSubmit() {
-                console.log('submit!');
+            async onSubmit() {
+               const {data:res} = await this.$http.get('/bookClass/add?name=' + this.form.name + '&descr=' + this.form.descr)
+                if(res == 1){
+                    this.$message.success("添加成功！")
+                }
             }
         }
     }

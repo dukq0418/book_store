@@ -3,11 +3,11 @@
     <el-main>
       <!--  根据名字查找  -->
       <el-table
-        :data="tableData.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
+        :data="bookClassList"
         style="width: 100%">
         <el-table-column
           label="序号"
-          prop="date">
+          prop="id">
         </el-table-column>
         <el-table-column
           label="分类名称"
@@ -15,29 +15,25 @@
         </el-table-column>
         <el-table-column
           label="分类说明"
-          prop="address">
+          prop="descr">
         </el-table-column>
         <el-table-column
           align="right"
           label="操作">
           <template slot-scope="scope">
-            <el-button
-              size="mini"
-              @click="handleEdit(scope.$index, scope.row)">Edit</el-button>
+<!--            <el-button-->
+<!--              size="mini"-->
+<!--              @click="handleEdit(scope.$index, scope.row)">Edit</el-button>-->
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">Delete</el-button>
+              @click="handleDelete(scope.row.id)">Delete</el-button>
           </template>
         </el-table-column>
       </el-table>
     </el-main>
     <el-footer>
-      <el-pagination
-        background
-        layout="prev, pager, next"
-        :total="100">
-      </el-pagination>
+
     </el-footer>
   </el-container>
 </template>
@@ -52,32 +48,43 @@
     export default {
         data() {
             return {
-                tableData: [{
-                    date: '2016-05-02',
-                    name: '王小虎',
-                    address: '上海市普陀区金沙江路 1518 弄'
-                }, {
-                    date: '2016-05-04',
-                    name: '王小虎',
-                    address: '普陀区金沙江路 1517 弄'
-                }, {
-                    date: '2016-05-01',
-                    name: '张晓明',
-                    address: '普陀区金沙江路 1519 弄'
-                }, {
-                    date: '2016-05-03',
-                    name: '徐晓燕',
-                    address: '普陀区金沙江路 1516 弄'
-                }],
-                search: ''
+                bookClassList: []
             }
         },
+        created(){
+            this.getBookClass()
+        },
         methods: {
-            handleEdit(index, row) {
-                console.log(index, row);
+            // handleEdit(index, row) {
+            //     console.log(index, row);
+            // },
+            async handleDelete(id) {
+                const confirmResult = await this.$confirm(
+                    '此操作将永久删除该条信息, 是否继续?',
+                    '提示',
+                    {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }
+                ).catch(err => err)
+                if(confirmResult !== 'confirm'){
+                    return this.$message.info('已取消删除')
+                }
+
+                const {data: res} = await this.$http.get('/bookClass/delete?id=' + id)
+                if(res == 'success'){
+                    this.$message.success('删除成功！')
+                    this.getBookClass()
+                }else{
+                    return this.$message.error('删除用户成功！')
+                }
+                console.log();
             },
-            handleDelete(index, row) {
-                console.log(index, row);
+            async getBookClass(){
+                const {data: res} = await this.$http.get("/bookClass/queryAll")
+                console.log(res)
+                this.bookClassList = res
             }
         },
     }

@@ -19,20 +19,18 @@
             <template slot="title"><i class="el-icon-reading"></i>会员管理</template>
             <el-menu-item index="/user/user_list">查看所有会员</el-menu-item>
           </el-submenu>
-          <el-submenu index="4">
+<!--          <el-submenu index="4">-->
 
-            <template slot="title"><i class="el-icon-reading"></i>订单管理</template>
-            <el-menu-item index="/order/order">查看订单</el-menu-item>
-          </el-submenu>
+<!--            <template slot="title"><i class="el-icon-reading"></i>订单管理</template>-->
+<!--            <el-menu-item index="/order/order">查看订单</el-menu-item>-->
+<!--          </el-submenu>-->
         </el-menu>
       </el-aside>
       <el-container>
         <el-header style="text-align: right; font-size: 12px" >
           <el-dropdown>
             <i class="el-icon-setting" style="margin-right: 15px"></i>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>退出</el-dropdown-item>
-            </el-dropdown-menu>
+            <el-button @click="goBack">退出</el-button>
           </el-dropdown>
         </el-header>
         <el-main>
@@ -71,8 +69,11 @@
 <script>
     export default {
         methods: {
-            goBack() {
-                console.log('go back');
+            async goBack() {
+               const {data:res} = await this.$http.get('/admin/logout')
+                if (res == "success"){
+                    this.$router.push('/')
+                }
             }
         }
     }
